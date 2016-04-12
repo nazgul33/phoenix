@@ -40,8 +40,78 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.3</version>
+        <executions>
+          <execution>
+            <id>client</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration combine.self="override">
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+              <minimizeJar>false</minimizeJar>
+              <artifactSet>
+                <includes>
+                  <!-- client.xml-->
+                  <include>org.apache.hbase:hbase*</include>
+                  <include>org.apache.htrace:htrace-core</include>
+                  <include>io.netty:netty-all</include>
+                  <include>commons-codec:commons-codec</include>
+
+                  <!-- components-minimal.xml -->
+                  <include>org.antlr:antlr*</include>
+                  <include>org.apache.phoenix:phoenix-*</include>
+                  <include>org.iq80.snappy:snappy</include>
+
+                  <!-- We use a newer version of guava than HBase - this might be an issue? -->
+                  <include>com.google.guava:*</include>
+                  <!-- HBase also pulls in these dependencies on its own, should we include-them? -->
+                  <include>com.google.protobuf:protobuf-java</include>
+                  <include>org.apache.zookeeper:zookeeper</include>
+                  <include>org.apache.hadoop:hadoop*</include>
+                  <include>commons-configuration:commons-configuration</include>
+                  <include>commons-io:commons-io</include>
+                  <include>commons-logging:commons-logging</include>
+                  <include>commons-lang:commons-lang</include>
+                  <include>commons-cli:commons-cli</include>
+                  <include>org.apache.commons:commons-csv</include>
+                  <include>org.codehaus.jackson:jackson-mapper-asl</include>
+                  <include>org.codehaus.jackson:jackson-core-asl</include>
+                  <include>commons-collections:commons-collections</include>
+                  <include>joda-time:joda-time</include>
+                  <include>org.jruby.joni:joni</include>
+                  <include>org.jruby.jcodings:jcodings</include>
+
+                  <!-- all-common-dependencies.xml -->
+                  <include>org.jboss.netty:netty</include>
+                </includes>
+                <excludes>
+                  <!-- components-minimal.xml -->
+                  <exclude>org.apache.phoenix:phoenix-flume</exclude>
+                  <exclude>org.apache.phoenix:phoenix-pig</exclude>
+                  <exclude>org.apache.phoenix:phoenix-server</exclude>
+                  <exclude>org.apache.phoenix:phoenix-server-client</exclude>
+                </excludes>
+              </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>${guava.package}</pattern>
+                  <shadedPattern>${shade.prefix}.${guava.package}</shadedPattern>
+                </relocation>
+              </relocations>
+              <!-- <outputDirectory>${project.basedir}/target</outputDirectory> -->
+              <outputFile>target/phoenix-${project.version}-client.jar</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
+          <!--
           <execution>
             <id>client</id>
             <phase>package</phase>
@@ -64,6 +134,7 @@
               </descriptors>
             </configuration>
           </execution>
+          -->
           <execution>
             <id>client-minimal</id>
             <phase>package</phase>

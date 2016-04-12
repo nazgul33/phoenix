@@ -132,6 +132,9 @@
     <!-- Set default encoding so multi-byte tests work correctly on the Mac -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <shade.prefix>shaded.hbase</shade.prefix>
+    <guava.package>com.google.common</guava.package>
   </properties>
 
   <build>
